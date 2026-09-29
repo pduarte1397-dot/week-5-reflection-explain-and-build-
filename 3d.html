@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Pencil</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at center, #26334a 0%, #101522 55%, #05070c 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+/* Scene */
+.scene {
+  width: 500px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+}
+
+/* Pencil */
+.pencil {
+  width: 430px;
+  height: 55px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateZ(-12deg) rotateY(-18deg);
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Pencil body */
+.body {
+  position: absolute;
+  left: 45px;
+  top: 0;
+  width: 330px;
+  height: 55px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f7c72e 0%,
+      #ffdf48 15%,
+      #e8ae13 30%,
+      #ffd83d 48%,
+      #c98d08 70%,
+      #f4c326 85%,
+      #a97205 100%
+    );
+
+  border-radius: 5px;
+
+  box-shadow:
+    inset 0 5px 8px rgba(255,255,255,.45),
+    inset 0 -7px 10px rgba(80,45,0,.35),
+    0 20px 30px rgba(0,0,0,.4);
+
+  transform-style: preserve-3d;
+}
+
+/* Pencil stripes */
+.body::before,
+.body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 100%;
+  background: rgba(80, 45, 0, .2);
+}
+
+.body::before {
+  left: 90px;
+}
+
+.body::after {
+  right: 95px;
+}
+
+/* Brand */
+.label {
+  position: absolute;
+  left: 130px;
+  top: 15px;
+  color: #795300;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  transform: rotate(180deg);
+  opacity: .8;
+}
+
+/* Metal ferrule */
+.ferrule {
+  position: absolute;
+  right: 15px;
+  top: -1px;
+  width: 55px;
+  height: 57px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #777 0%,
+      #ddd 15%,
+      #aaa 30%,
+      #f3f3f3 48%,
+      #8a8a8a 65%,
+      #ddd 82%,
+      #666 100%
+    );
+
+  border-radius: 2px 7px 7px 2px;
+
+  box-shadow:
+    inset 0 3px 5px rgba(255,255,255,.5),
+    inset 0 -5px 8px rgba(0,0,0,.3);
+}
+
+/* Ferrule rings */
+.ferrule::before,
+.ferrule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: #777;
+  box-shadow: inset 0 1px 2px #fff;
+}
+
+.ferrule::before {
+  top: 10px;
+}
+
+.ferrule::after {
+  bottom: 10px;
+}
+
+/* Eraser */
+.eraser {
+  position: absolute;
+  right: -32px;
+  top: 3px;
+  width: 32px;
+  height: 49px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #b83d5a,
+      #f06b82 30%,
+      #d64b69 65%,
+      #9e2f48
+    );
+
+  border-radius: 2px 9px 9px 2px;
+
+  box-shadow:
+    inset 0 4px 6px rgba(255,255,255,.35),
+    inset 0 -5px 7px rgba(80,0,20,.3);
+}
+
+/* Wooden pencil tip */
+.tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  width: 75px;
+  height: 55px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f2d29c 0%,
+      #d7a96c 45%,
+      #b8793c 100%
+    );
+
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+
+  filter: drop-shadow(0 12px 8px rgba(0,0,0,.3));
+}
+
+/* Wood grain */
+.tip::before {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 2px;
+  top: 25px;
+  left: 8px;
+  background: rgba(100, 50, 15, .25);
+  transform: rotate(-20deg);
+}
+
+/* Graphite */
+.graphite {
+  position: absolute;
+  left: -3px;
+  top: 22px;
+
+  width: 13px;
+  height: 13px;
+
+  background:
+    radial-gradient(circle at 40% 35%, #777, #111 65%);
+
+  clip-path: polygon(
+    0 50%,
+    100% 0,
+    100% 100%
+  );
+
+  z-index: 5;
+}
+
+/* Pencil shadow */
+.shadow {
+  position: absolute;
+  width: 390px;
+  height: 35px;
+  bottom: 45px;
+
+  background: rgba(0,0,0,.5);
+  border-radius: 50%;
+
+  filter: blur(15px);
+  transform: rotate(-5deg);
+}
+
+
+/* Floating animation */
+@keyframes float {
+
+  0%, 100% {
+    transform:
+      translateY(0)
+      rotateZ(-12deg)
+      rotateY(-18deg);
+  }
+
+  50% {
+    transform:
+      translateY(-18px)
+      rotateZ(-12deg)
+      rotateY(18deg);
+  }
+
+}
+
+
+/* Small screen */
+@media (max-width: 600px) {
+
+  .scene {
+    transform: scale(.75);
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+
+  <div class="shadow"></div>
+
+  <div class="pencil">
+
+    <!-- Pencil tip -->
+    <div class="tip"></div>
+
+    <!-- Graphite -->
+    <div class="graphite"></div>
+
+    <!-- Main pencil body -->
+    <div class="body">
+
+      <div class="label">
+        HB 2
+      </div>
+
+    </div>
+
+    <!-- Metal ferrule -->
+    <div class="ferrule"></div>
+
+    <!-- Eraser -->
+    <div class="eraser"></div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
